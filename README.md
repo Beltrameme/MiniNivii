@@ -6,7 +6,7 @@ A simplified version of Nivil that answers natural language questions with data 
 
 1. Clone this repository
 2. Install dependencies:
-   - Backend: `cd backend && pip install -r requirements.txt`
+   - Backend: `cd backend && source venv/bin/activate && pip install -r requirements.txt`
    - Frontend: `cd frontend && npm install`
 3. Run the application:
    - Backend: `python app.py`

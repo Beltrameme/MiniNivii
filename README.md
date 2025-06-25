@@ -14,7 +14,7 @@ A simplified version of Nivil that answers natural language questions with data 
 
 ## Tech Stack
 
-- **Backend**: Python (Flask/FastAPI)
+- **Backend**: Python (FastAPI)
 - **Frontend**: React
 - **Database**: SQLite
 - **Visualization**: Chart.js

@@ -33,8 +33,8 @@ async def echo(request: Request):
     llmQuery = generate_query(question,schema)
     print(llmQuery)
     results = query(llmQuery)
-    print(results)
-    return json.dumps(results)
+    print(json.dumps(results))
+    return results
 
 if __name__ == '__main__':
     import uvicorn

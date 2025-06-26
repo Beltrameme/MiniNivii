@@ -34,10 +34,7 @@ async def echo(request: Request):
     print(llmQuery)
     results = query(llmQuery)
     print(results)
-    return {
-        "question": question,
-        "answer": json.dumps(results)
-    }
+    return json.dumps(results)
 
 if __name__ == '__main__':
     import uvicorn

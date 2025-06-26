@@ -2,7 +2,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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"
+    api_key="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"
 )
 
 def generate_query(question,schema):

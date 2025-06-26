@@ -2,12 +2,13 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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"
+    api_key="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"
 )
 
 def generate_query(question,schema):
     prompt= f'''
     Conver the question below into a SQLite query for a table with the following schema {schema}
+    Here is an example row in csv "10/26/2024,Saturday,15:53,FCB 0003-000015941,52,Alfajor choc x un,1,1900,1900"
     Question: {question}
     ONLY RETURN A SQL QUERY, no explanations needed, no markdown formatting, just the pure SQL query
     '''

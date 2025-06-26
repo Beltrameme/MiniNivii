@@ -36,7 +36,7 @@ async def echo(request: Request):
     print(results)
     return {
         "question": question,
-        "answer": json.dumps(result)
+        "answer": json.dumps(results)
     }
 
 if __name__ == '__main__':

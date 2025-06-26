@@ -2,6 +2,7 @@ import csv, sqlite3
 
 def get_connection():
     conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     cursor.execute('''
@@ -42,5 +43,15 @@ def load_csv(csv_path):
                 )
                 ''', row)
         conn.commit()
+    finally:
+        conn.close()
+
+def query(query_str: str) -> list[dict[str, any]]:
+    conn, cursor = get_connection()
+    try:
+        cursor.execute(query_str)
+        # Convert SQLite rows to dictionaries
+        results = [dict(row) for row in cursor.fetchall()]
+        return results
     finally:
         conn.close()

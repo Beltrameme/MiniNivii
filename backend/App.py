@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from Database import query
+import json
+from LLMhandler import generate_query
 
 app = FastAPI()
-
+schema = "sales(date TEXT NOT NULL,week_day TEXT NOT NULL,hour TEXT NOT NULL,ticket_number TEXT NOT NULL,waiter INT NOT NULL,product_name TEXT NOT NULL,quantity INT NOT NULL,unitary_price INT NOT NULL,total INT NOT NULL)"
 # Setup CORS
 app.add_middleware(
     CORSMiddleware,
@@ -27,9 +30,13 @@ async def echo(request: Request):
     if not question:
         raise HTTPException(status_code=400, detail="question field is required")
     
+    llmQuery = generate_query(question,schema)
+    print(llmQuery)
+    results = query(llmQuery)
+    print(results)
     return {
         "question": question,
-        "answer": "received"
+        "answer": json.dumps(result)
     }
 
 if __name__ == '__main__':

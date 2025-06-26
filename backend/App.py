@@ -1,25 +1,37 @@
-from flask import Flask, request,jsonify
-from flask_cors import CORS
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI()
 
-@app.route('/')
-def health_check():
-    return jsonify({"status": "healthy"})
+# Setup CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
-@app.route('/ask', methods=['POST'])
-def echo():
-    data = request.get_json()
+@app.get("/")
+async def health_check():
+    return {"status": "healthy"}
 
-    if not data:
-        return jsonify({"error": "no question" }), 400
+@app.post("/ask")
+async def echo(request: Request):
+    data = await request.json()
     
-    question = data['question']
-    return jsonify({
+    if not data:
+        raise HTTPException(status_code=400, detail="no question")
+    
+    question = data.get('question')
+    if not question:
+        raise HTTPException(status_code=400, detail="question field is required")
+    
+    return {
         "question": question,
-        "answer": "recieved"
-    })
+        "answer": "received"
+    }
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=5000)

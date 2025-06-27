@@ -55,11 +55,11 @@ function App() {
 
   const determineChartType = (question, data) => {
     if (!data) {
-      setChartType('none');
+      setChartType(null);
       return;
     }
     if(data.length <= 1){
-      setChartType('text')
+      setChartType('none')
       return;
     }
     const lowercaseQ = question.toLowerCase();
@@ -328,7 +328,7 @@ function App() {
         
         {responseData && (
           <div style={{ width: '90%', maxWidth: '900px', margin: '20px auto', height: '400px' }}>
-            {chartType === 'none' || chartType === 'text' ? (
+            {chartType === 'none' ? (
               <Card>
                 <CardContent>
                   <Typography>Single Value Result</Typography>

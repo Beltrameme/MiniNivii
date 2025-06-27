@@ -51,7 +51,7 @@ function App() {
   };
 
   const determineChartType = (data) => {
-    if (!data?.length || data.length == 0) return setChartType('none');
+    if (!data?.length || data.length === 0) return setChartType('none');
     if (data.length === 1) return setChartType('text');
 
     const lowercaseQ = question.toLowerCase();

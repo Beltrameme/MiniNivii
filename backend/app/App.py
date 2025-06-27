@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from Database import query
+from app.Database import query, load_csv
 import json
-from LLMhandler import generate_query
+from app.LLMhandler import generate_query
+
+load_csv('../data/data.csv')
 
 app = FastAPI()
 # Setup CORS
@@ -36,7 +38,3 @@ async def echo(request: Request):
     results = query(llmQuery)
     print(json.dumps(results))
     return results
-
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)

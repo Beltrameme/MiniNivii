@@ -1,0 +1,5 @@
+date,week_day,hour,ticket_number,waiter,product_name,quantity,unitary_price,total
+11/13/2024,Wednesday,16:55,FCB 0003-000024735,0,Alfajor Super DDL x un,1,2700,2700
+11/13/2024,Wednesday,16:55,FCB 0003-000024735,0,Alfajor Sin Azucar Suelto,1,2700,2700
+10/4/2024,Friday,11:31,FCA 0003-000000038,51,Conito choc caja x12un,19,15675,297825
+10/4/2024,Friday,14:00,FCA 0003-000000043,51,Alfajor Sin Azucar x9 Un,1,22500,22500

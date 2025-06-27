@@ -1,24 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { Chart, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
 import { Card, CardContent, Typography } from '@mui/material';
 
-// Register Chart.js components
-Chart.register(
-  BarController, LineController, PieController, 
-  CategoryScale, LinearScale, 
-  BarElement, LineElement, PointElement, ArcElement, 
-  Tooltip, Legend
-);
-
-// Colors for charts
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+// Register all Chart.js components at once
+Chart.register(...registerables);
 
 function App() {
   const [question, setQuestion] = useState("");
   const [responseData, setResponseData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [chartType, setChartType] = useState('auto');
+  const [error, setError] = useState(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -26,281 +19,180 @@ function App() {
       renderChart();
     }
     return () => {
-      // Clean up chart instance when component unmounts or data changes
       if (chartRef.current) {
         chartRef.current.destroy();
-        chartRef.current = null;
       }
     };
   }, [responseData, chartType]);
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
+    setError(null)
     try {
       const response = await fetch('http://localhost:5000/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question })
       });
+      if (!response.ok) { // Check for HTTP error statuses
+      throw new Error(`Server responded with status ${response.status}`);
+      }
       const data = await response.json();
       setResponseData(data);
-      determineChartType(question, data);
-    } catch (error) {
-      console.error('Error:', error);
+      determineChartType(data);
+      
+    } catch (err) {
+      setError(err.message);
+      
     } finally {
       setLoading(false);
     }
   };
 
-  const determineChartType = (question, data) => {
-    if (!data) {
-      setChartType(null);
-      return;
-    }
-    if(data.length <= 1){
-      setChartType('none')
-      return;
-    }
+  const determineChartType = (data) => {
+    if (!data?.length || data.length == 0) return setChartType('none');
+    if (data.length === 1) return setChartType('text');
+
     const lowercaseQ = question.toLowerCase();
-    if (lowercaseQ.includes('trend') || lowercaseQ.includes('time') || lowercaseQ.includes('date')) {
-      setChartType('line');
-      return
-    } else if (lowercaseQ.includes('biggest') || lowercaseQ.includes('most') || lowercaseQ.includes('top')) {
-      setChartType('bar');
-      return
-    } else if (data.length <= 7) {
-      setChartType('pie');
-      return;
-    } else {
-      setChartType('bar');
-    }
+    const timeKeywords = ['trend', 'time', 'date', 'year', 'change over'];
+    const comparisonKeywords = ['compare', 'versus', 'vs', 'difference', 'ranking'];
+
+    if (timeKeywords.some(k => lowercaseQ.includes(k))) return setChartType('line');
+    if (comparisonKeywords.some(k => lowercaseQ.includes(k))) return setChartType('bar');
+    if (data.length <= 7) return setChartType('pie');
+    
+    setChartType('bar');
   };
 
-  const getValueField = (data) => {
-    if (!data || !data[0]) return null;
-    
-    const valueFields = ['total', 'quantity', 'sum_total', 'sum_quantity'];
-    
-    for (const field of valueFields) {
-      if (data[0][field] !== undefined) {
-        return field;
-      }
-    }
-    
-    const categoryFields = ['product_name', 'waiter', 'date', 'week_day', 'hour', 'ticket_number'];
-    for (const key in data[0]) {
-      if (!categoryFields.includes(key) && typeof data[0][key] === 'number') {
-        return key;
-      }
-    }
-    
-    return null;
-  };
+  const getChartData = () => {
+    if (!responseData?.length) return { labels: [], values: [] };
 
-  const getNameField = (data) => {
-    if (!data || !data[0]) return null;
-    
-    const nameFields = ['product_name', 'waiter', 'date', 'week_day', 'hour'];
-    for (const field of nameFields) {
-      if (data[0][field] !== undefined) {
-        return field;
-      }
-    }
-    
-    for (const key in data[0]) {
-      if (typeof data[0][key] === 'string') {
-        return key;
-      }
-    }
-    
-    return null;
-  };
+    const valueField = responseData.total ? 'total' : responseData.quantity ? 'quantity' : responseData.sum_total ? 'sum_total' : responseData.sum_quantity ? 'sum_quantity' :  Object.keys(responseData[0]).find(k => typeof responseData[0][k] === 'number');//alto
+    const nameField = Object.keys(responseData[0]).find(k => typeof responseData[0][k] === 'string'); //dif puntos
 
-  const prepareChartData = () => {
-    if (!responseData || !responseData.length) return [];
+    const sortedData = [...responseData].sort((a, b) => 
+      a.date && b.date ? new Date(a.date) - new Date(b.date) : 0
+    );
 
-    const valueField = getValueField(responseData);
-    const nameField = getNameField(responseData);
-
-    return responseData.map(item => ({
-      name: nameField ? item[nameField] : 'Item',
-      value: valueField ? item[valueField] : 0,
-      ...item
-    }));
+    return {
+      labels: sortedData.map(item => item[nameField] || 'Item'),
+      values: sortedData.map(item => valueField ? item[valueField] : 0),
+      valueField,
+      nameField
+    };
   };
 
   const renderChart = () => {
-    if (!responseData || !responseData.length) return null;
-
-    const chartData = prepareChartData();
-    const valueField = getValueField(responseData);
-    const nameField = getNameField(responseData);
-    
-    if (!valueField) {
-      return (
-        <Card>
-          <CardContent>
-            <Typography>No numeric data found to display</Typography>
-            <pre>{JSON.stringify(responseData, null, 2)}</pre>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    // Destroy previous chart if it exists
-    if (chartRef.current) {
-      chartRef.current.destroy();
-    }
 
     const ctx = document.getElementById('chartCanvas');
-    if (!ctx) return;
+    if (!ctx || !responseData?.length) return;
 
-    const labels = chartData.map(item => item.name);
-    const dataValues = chartData.map(item => item.value);
+    const { labels, values, valueField } = getChartData();
 
-    const barFill = '#00C49F';  // Bright teal
-    const lineStroke = '#FF8042'; // Bright orange
+    if (chartRef.current) chartRef.current.destroy();
+
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}`
+          }
+        }
+      },
+      animation: { duration: 1000 }
+    };
 
     switch (chartType) {
       case 'bar':
         chartRef.current = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: labels,
+            labels,
             datasets: [{
               label: valueField,
-              data: dataValues,
-              backgroundColor: barFill,
+              data: values,
+              backgroundColor: '#00C49F',
               borderColor: '#000',
               borderWidth: 1
             }]
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            },
-            plugins: {
-              legend: {
-                position: 'top',
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    return `${context.dataset.label}: ${context.raw}`;
-                  }
-                }
-              }
-            },
-            animation: {
-              duration: 1500
-            }
+            ...commonOptions,
+            scales: { y: { beginAtZero: true } }
           }
         });
         break;
-      
+
       case 'line':
         chartRef.current = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: labels,
+            labels,
             datasets: [{
               label: valueField,
-              data: dataValues,
-              borderColor: lineStroke,
-              backgroundColor: lineStroke,
+              data: values,
+              borderColor: '#FF8042',
               borderWidth: 3,
-              pointBackgroundColor: lineStroke,
               pointRadius: 5,
-              pointHoverRadius: 8,
               fill: false
             }]
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            },
-            plugins: {
-              legend: {
-                position: 'top',
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    return `${context.dataset.label}: ${context.raw}`;
-                  }
-                }
-              }
-            },
-            animation: {
-              duration: 1500
-            }
+            ...commonOptions,
+            scales: { y: { beginAtZero: true } }
           }
         });
         break;
-      
+
       case 'pie':
         chartRef.current = new Chart(ctx, {
           type: 'pie',
           data: {
-            labels: labels,
+            labels,
             datasets: [{
-              data: dataValues,
-              backgroundColor: COLORS.slice(0, chartData.length),
-              borderWidth: 1
+              data: values,
+              backgroundColor: ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d']
             }]
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            ...commonOptions,
             plugins: {
-              legend: {
-                position: 'right',
-              },
+              ...commonOptions.plugins,
               tooltip: {
                 callbacks: {
-                  label: function(context) {
-                    const label = context.label || '';
-                    const value = context.raw || 0;
-                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                    const percentage = Math.round((value / total) * 100);
-                    return `${label}: ${value} (${percentage}%)`;
+                  label: (ctx) => {
+                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                    const percent = Math.round((ctx.raw / total) * 100);
+                    return `${ctx.label}: ${ctx.raw} (${percent}%)`;
                   }
                 }
               }
-            },
-            animation: {
-              duration: 1500
             }
           }
         });
         break;
-      
-      case 'none':
+
+      case 'text':
         return (
           <Card>
             <CardContent>
-              <Typography>Single Value Result</Typography>
+              <Typography>Result</Typography>
               <Typography variant="h5">
-                {responseData[0][valueField]}
+                {JSON.stringify(responseData, null, 2)}
               </Typography>
             </CardContent>
           </Card>
         );
-      
+
       default:
         return (
           <Card>
             <CardContent>
-              <Typography>Unable to determine chart type</Typography>
+              <Typography>No data to display</Typography>
               <pre>{JSON.stringify(responseData, null, 2)}</pre>
             </CardContent>
           </Card>
@@ -318,6 +210,7 @@ function App() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Ask a question about your data..."
+            disabled={loading}
           />
           <button type="submit" disabled={loading}>
             {loading ? 'Asking...' : 'Ask'}
@@ -325,20 +218,27 @@ function App() {
         </form>
         
         {loading && <p>Loading...</p>}
-        
-        {responseData && (
+        {error && <p style={{ color: 'red' }}>Error: {JSON.stringify(error)}</p>}
+
+        {responseData && !error && (
           <div style={{ width: '90%', maxWidth: '900px', margin: '20px auto', height: '400px' }}>
-            {chartType === 'none' ? (
+            {['text'].includes(chartType) ? (
               <Card>
                 <CardContent>
-                  <Typography>Single Value Result</Typography>
+                  <Typography>Result</Typography>
                   <Typography variant="h5">
-                    {responseData[0][getValueField(responseData)]}
+                    {JSON.stringify(responseData)}
                   </Typography>
                 </CardContent>
               </Card>
-            ) : (
-              <canvas id="chartCanvas" style={{ width: '100%', height: '100%' }}></canvas>
+            ) : ['none'].includes(chartType) ? (
+              <Card>
+            <CardContent>
+              <Typography>No data to display</Typography>
+              <pre>{JSON.stringify(responseData, null, 2)}</pre>
+            </CardContent>
+          </Card>) : (
+              <canvas id="chartCanvas" style={{ width: '100%', height: '100%' }} />
             )}
           </div>
         )}

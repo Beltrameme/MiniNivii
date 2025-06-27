@@ -1,14 +1,13 @@
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key="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"
+    api_key="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"
 )
 
 def generate_query(question):
     prompt= f'''
-    Convert the following question into a SQLite query for a table with exactly these columns in this order: 
-    date (text), week_day (text), hour (text), ticket_number (text), waiter (integer), product_name (text), quantity (integer), unitary_price (integer), total (integer)
+    Convert the following question into a SQLite query for a table called sales with exactly these columns in this order: 
+    date (text), week_day (text), hour (text), ticket_number (text), waiter (text), product_name (text), quantity (integer), unitary_price (integer), total (integer)
 
     STRICT RULES:
     1. ONLY return the SQL query, nothing else - no explanations, no markdown, no formatting
@@ -20,16 +19,17 @@ def generate_query(question):
     5. For text comparisons, use exact matches with = operator unless specified otherwise
     6. When returning full rows, use SELECT * unless specific columns are requested
     7. Always include the ticket_number when filtering by product or date
-    8. Never use LIMIT unless explicitly asked for in the question
+    9. If the query is out of the scope of the database, send back the following string "UNABLE TO MAKE QUERY"
+    10. always try to return full rows when possible, if not possible, return as much columns from those rows as possible
 
     Example valid responses:
-    SELECT * FROM table WHERE product_name = 'Alfajor choc x un'
-    SELECT SUM(total) AS sum_total FROM table WHERE date = '10/26/2024'
+    SELECT * FROM sales WHERE product_name = 'Alfajor choc x un'
+    SELECT SUM(total) AS sum_total FROM sales WHERE date = '10/26/2024'
 
     Question: {question}
     '''
     response = client.chat.completions.create(
-    model="deepseek/deepseek-r1:free",
+    model="gpt-4.1-2025-04-14",
     messages=[
         {
         "role": "user",

@@ -11,7 +11,7 @@ def get_connection():
             week_day TEXT NOT NULL,
             hour TEXT NOT NULL,
             ticket_number TEXT NOT NULL,
-            waiter INTEGER NOT NULL,
+            waiter TEXT NOT NULL,
             product_name TEXT NOT NULL,
             quantity INTEGER NOT NULL,
             unitary_price INTEGER NOT NULL,

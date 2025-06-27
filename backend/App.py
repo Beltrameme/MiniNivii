@@ -30,6 +30,8 @@ async def echo(request: Request):
         raise HTTPException(status_code=400, detail="question field is required")
     
     llmQuery = generate_query(question)
+    if(llmQuery == 'UNABLE TO MAKE QUERY'):
+        raise HTTPException(status_code=400, detail="Unable to make Query")
     print(llmQuery)
     results = query(llmQuery)
     print(json.dumps(results))

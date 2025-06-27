@@ -4,7 +4,7 @@ from app.Database import query, load_csv
 import json
 from app.LLMhandler import generate_query
 
-load_csv('../data/data.csv')
+load_csv('/app/data/data.csv')
 
 app = FastAPI()
 # Setup CORS

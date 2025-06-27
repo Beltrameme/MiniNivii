@@ -1,7 +1,8 @@
 from openai import OpenAI
 
 client = OpenAI(
-    
+    api_key="ca1dd6e2-a863-4869-88b0-13b88fec9211",
+    base_url="https://api.sambanova.ai/v1",
 )
 
 def generate_query(question):
@@ -29,7 +30,7 @@ def generate_query(question):
     Question: {question}
     '''
     response = client.chat.completions.create(
-    model="gpt-4.1-2025-04-14",
+    model="Llama-4-Maverick-17B-128E-Instruct",
     messages=[
         {
         "role": "user",

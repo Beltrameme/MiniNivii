@@ -52,7 +52,7 @@ function App() {
 
   const determineChartType = (data) => {
     if (!data?.length || data.length === 0) return setChartType('none');
-    if (data.length === 1) return setChartType('text');
+    
 
     const lowercaseQ = question.toLowerCase();
     const timeKeywords = ['trend', 'time', 'date', 'year', 'change over'];
@@ -61,6 +61,7 @@ function App() {
     if (timeKeywords.some(k => lowercaseQ.includes(k))) return setChartType('line');
     if (comparisonKeywords.some(k => lowercaseQ.includes(k))) return setChartType('bar');
     if (data.length <= 7) return setChartType('pie');
+    if (data.length === 1) return setChartType('text');
     
     setChartType('bar');
   };

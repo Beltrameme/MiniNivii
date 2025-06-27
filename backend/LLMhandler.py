@@ -1,7 +1,7 @@
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="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"
+    api_key=""
 )
 
 def generate_query(question):

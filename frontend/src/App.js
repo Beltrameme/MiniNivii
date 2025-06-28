@@ -14,6 +14,7 @@ function App() {
   const [error, setError] = useState(null);
   const chartRef = useRef(null);
 
+  // erase chart if new one is being generated
   useEffect(() => {
     if (responseData) {
       renderChart();
@@ -25,6 +26,7 @@ function App() {
     };
   }, [responseData, chartType]);
 
+  // handling the question submit and posibble http errors
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -50,6 +52,7 @@ function App() {
     }
   };
 
+  // auto chart type determinator
   const determineChartType = (data) => {
     console.log(data);
     console.log(data.length);
@@ -70,11 +73,19 @@ function App() {
     setChartType('bar');
   };
 
+  // getting the chart data
   const getChartData = () => {
     if (!responseData?.length) return { labels: [], values: [] };
 
-    const valueField = responseData.total ? 'total' : responseData.quantity ? 'quantity' : responseData.sum_total ? 'sum_total' : responseData.sum_quantity ? 'sum_quantity' :  Object.keys(responseData[0]).find(k => typeof responseData[0][k] === 'number');//alto
-    const nameField = Object.keys(responseData[0]).find(k => typeof responseData[0][k] === 'string'); //dif puntos
+    const firstRow = responseData[0] || {};
+
+    const valueField = 
+      'total' in firstRow ? 'total' :
+      'quantity' in firstRow ? 'quantity' :
+      'sum_total' in firstRow ? 'sum_total' :
+      'sum_quantity' in firstRow ? 'sum_quantity' :
+      Object.keys(firstRow).find(k => typeof firstRow[k] === 'number');//height
+    const nameField = Object.keys(responseData[0]).find(k => typeof responseData[0][k] === 'string'); //x axis
 
     const sortedData = [...responseData].sort((a, b) => 
       a.date && b.date ? new Date(a.date) - new Date(b.date) : 0
@@ -88,6 +99,7 @@ function App() {
     };
   };
 
+  //chart rendering
   const renderChart = () => {
 
     const ctx = document.getElementById('chartCanvas');
@@ -193,6 +205,7 @@ function App() {
     }
   };
 
+  //basic html/cdd/react for the page
   return (
     <div className="App">
       <header className="App-header">

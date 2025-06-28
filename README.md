@@ -9,7 +9,7 @@ A simplified version of Nivil that answers natural language questions with data 
    - Backend:
    ```bash
       git clone <repo>
-      cd backend/app
+      cd backend
       python3 -m venv venv
       source venv/bin/activate
       pip install -r requirements.txt

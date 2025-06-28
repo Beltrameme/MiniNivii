@@ -6,12 +6,26 @@ A simplified version of Nivil that answers natural language questions with data 
 
 1. Clone this repository
 2. Install dependencies:
-   - Backend: `cd backend && cd app && source venv/bin/activate && pip install -r requirements.txt`
-   - Frontend: `cd frontend && npm install`
-3. Run the application:
+   - Backend:
+   ```bash
+      git clone <repo>
+      cd backend/app
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install -r requirements.txt
+    ```
+   
+   - Frontend:
+   ```bash
+      git clone <repo>
+      cd frontend
+      npm install
+      npm start
+    ```
+4. Run the application:
    - Backend: `python app.py`
    - Frontend: `npm start`
-4. To run in docker:
+5. To run in docker:
    - `docker-compose up --build`
 
 ## Tech Stack
@@ -21,6 +35,19 @@ A simplified version of Nivil that answers natural language questions with data 
 - **Database**: SQLite
 - **Visualization**: Chart.js
 - **LLM Integration**: OpenAI API
+
+## Project Structure
+
+miniNivii/
+├── backend/
+│ ├── app/ # FastAPI backend code
+│ ├── data/ # CSV files
+│ └── dockerfile
+├── frontend/
+│ ├── src/ # React components
+│ └── dockerfile
+├── docker-compose.yml
+├── README.md
 
 ## Design Desicions
 

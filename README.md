@@ -37,7 +37,7 @@ A simplified version of Nivil that answers natural language questions with data 
 - **LLM Integration**: OpenAI API
 
 ## Project Structure
-
+```bash
 miniNivii/
 ├── backend/
 │ ├── app/ # FastAPI backend code
@@ -48,7 +48,7 @@ miniNivii/
 │ └── dockerfile
 ├── docker-compose.yml
 ├── README.md
-
+```
 ## Design Desicions
 
 FastAPI was chosen as the backend framework for its fast performance and ease of use. Although it may not have the large communities of Flask or Django, its lightweight design and API-first approach make it well-suited for AI-driven projects.

@@ -4,16 +4,26 @@ A simplified version of Nivil that answers natural language questions with data 
 
 ## Setup Instructions
 
+Dependencies needed before installation:
+   - Python 3.12
+   - Pip 25.0
+   - Node 20
+   - Javascript ES6
+   - React 19
+
 1. Clone this repository
 2. Install dependencies:
    - Backend:
    ```bash
-      git clone <repo>
       cd backend
       python3 -m venv venv
       source venv/bin/activate
       pip install -r requirements.txt
+      cd app
+      touch .env
+      deactivate
     ```
+   For the backend, inside the .env, please write your llm api key like this: `LLM_API_KEY=<your_api_key>`
    
    - Frontend:
    ```bash
@@ -23,8 +33,22 @@ A simplified version of Nivil that answers natural language questions with data 
       npm start
     ```
 4. Run the application:
-   - Backend: `python app.py`
-   - Frontend: `npm start`
+   - Backend:
+     ```bash
+        cd backend
+        source venv/bin/activate
+        cd app
+        python app.py
+     ```
+     This application is runnning in a virtual enviroment, if one wishes to close this enviroment, copy this code:
+     ```
+     deactivate
+     ```
+   - Frontend:
+     ```bash
+        cd frontend
+        npm start
+     ```
 5. To run in docker:
    - `docker-compose up --build`
 

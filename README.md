@@ -38,7 +38,7 @@ Dependencies needed before installation:
         cd backend
         source venv/bin/activate
         cd app
-        python app.py
+        uvicorn App:app --host 0.0.0.0 --port 5000
      ```
      This application is runnning in a virtual enviroment, if one wishes to close this enviroment, copy this code:
      ```

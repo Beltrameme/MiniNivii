@@ -51,7 +51,12 @@ function App() {
   };
 
   const determineChartType = (data) => {
+    console.log(data);
+    console.log(data.length);
+    
+    
     if (!data?.length || data.length === 0) return setChartType('none');
+    if (data.length === 1) return setChartType('text');
     
 
     const lowercaseQ = question.toLowerCase();
@@ -61,7 +66,6 @@ function App() {
     if (timeKeywords.some(k => lowercaseQ.includes(k))) return setChartType('line');
     if (comparisonKeywords.some(k => lowercaseQ.includes(k))) return setChartType('bar');
     if (data.length <= 7) return setChartType('pie');
-    if (data.length === 1) return setChartType('text');
     
     setChartType('bar');
   };
@@ -177,18 +181,6 @@ function App() {
         });
         break;
 
-      case 'text':
-        return (
-          <Card>
-            <CardContent>
-              <Typography>Result</Typography>
-              <Typography variant="h5">
-                {JSON.stringify(responseData, null, 2)}
-              </Typography>
-            </CardContent>
-          </Card>
-        );
-
       default:
         return (
           <Card>
@@ -226,10 +218,17 @@ function App() {
             {['text'].includes(chartType) ? (
               <Card>
                 <CardContent>
-                  <Typography>Result</Typography>
-                  <Typography variant="h5">
-                    {JSON.stringify(responseData)}
-                  </Typography>
+                  <Typography variant="h6" gutterBottom>Query Result</Typography>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <tbody>
+                      {responseData && responseData.length > 0 && Object.entries(responseData[0]).map(([key, value]) => (
+                        <tr key={key}>
+                          <td style={{ fontWeight: 'bold', padding: '4px 8px', border: '1px solid #ccc' }}>{key}</td>
+                          <td style={{ padding: '4px 8px', border: '1px solid #ccc' }}>{value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </CardContent>
               </Card>
             ) : ['none'].includes(chartType) ? (

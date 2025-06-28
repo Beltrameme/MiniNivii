@@ -1,7 +1,12 @@
+import os
 from openai import OpenAI
 
+api_key = os.getenv("LLM_API_KEY")
+if not api_key:
+    raise ValueError("LLM_API_KEY not found in environment variables.")
+
 client = OpenAI(
-    api_key="ca1dd6e2-a863-4869-88b0-13b88fec9211",
+    api_key=api_key,
     base_url="https://api.sambanova.ai/v1",
 )
 

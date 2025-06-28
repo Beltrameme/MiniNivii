@@ -2,11 +2,14 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
+
 #loading env variables
 load_dotenv()
+
 api_key = os.getenv("LLM_API_KEY")
 if not api_key:
     raise ValueError("LLM_API_KEY not found in environment variables.")
+
 
 #connection to OpenAI API
 client = OpenAI(

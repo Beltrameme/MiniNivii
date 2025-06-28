@@ -6,11 +6,13 @@ A simplified version of Nivil that answers natural language questions with data 
 
 1. Clone this repository
 2. Install dependencies:
-   - Backend: `cd backend && source venv/bin/activate && pip install -r requirements.txt`
+   - Backend: `cd backend && cd app && source venv/bin/activate && pip install -r requirements.txt`
    - Frontend: `cd frontend && npm install`
 3. Run the application:
    - Backend: `python app.py`
    - Frontend: `npm start`
+4. To run in docker:
+   - `docker-compose up --build`
 
 ## Tech Stack
 
@@ -19,3 +21,38 @@ A simplified version of Nivil that answers natural language questions with data 
 - **Database**: SQLite
 - **Visualization**: Chart.js
 - **LLM Integration**: OpenAI API
+
+## Design Desicions
+
+FastAPI was chosen as the backend framework for its fast performance and ease of use. Although it may not have the large communities of Flask or Django, its lightweight design and API-first approach make it well-suited for AI-driven projects.
+
+React offers a flexible architecture for the frontend. While it might have a steeper learning curve compared to frameworks like Vue, its optimized rendering provides a fast and responsive user experience.
+
+Chart.js was implemented because of its lightweight nature and ease of integration with React. Although it lacks some advanced chart types, the fast loading times and simplicity made it the most practical choice for this project.
+
+SQLite was chosen for its lightweight, file-based design, which is ideal for single-user use cases. It makes the user experience frictionless and minimizes setup overhead. While PostgreSQL or MySQL could have been used, their additional complexity and features were unnecessary for a small-scale app like this.
+
+## Scalability
+
+### Multi-user Usage:
+
+FastAPI would be replaced by a more robust and secure framework, such as Django, for its advanced session handling, authentication capabilities, and extensive ecosystem. Authentication could be implemented using JWT-based sessions to secure the API.
+
+The database would be migrated to PostgreSQL for its support for concurrent connections and advanced indexing. PostgreSQL also includes a user-roles mechanism, allowing different access levels within the database—ideal for organizations with multiple user types and sensitive data.
+
+Chart.js would be replaced by Plotly. While Plotly may have slightly slower rendering, it supports more complex and interactive charts with real-time updates, which would be valuable in a multi-user environment.
+
+Finally, API rate limits would need to be introduced to prevent abuse or overloading of the system—especially important given the involvement of LLM API calls.
+
+
+### Large Datasets & Complex Querys
+
+For large datasets, switching to PostgreSQL would again be beneficial due to its indexing, query optimization, and efficient handling of large volumes of data.
+
+Additional mechanisms would also be implemented to improve performance:
+
+   - A caching layer (e.g., Redis) could be introduced to store frequently requested queries or their results.
+
+   - A query engine like SQLAlchemy could be used to manage and optimize the queries being made to the database.
+
+   - To avoid overloading the system and to handle intensive data processing, a task queue (e.g., Celery) could be introduced to offload heavy operations and maintain responsiveness.

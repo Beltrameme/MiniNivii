@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.Database import query, load_csv
+from Database import query, load_csv
 import json
-from app.LLMhandler import generate_query
+from LLMhandler import generate_query
 
 load_csv('/app/data/data.csv')
 

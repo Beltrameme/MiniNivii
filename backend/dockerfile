@@ -13,13 +13,15 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire backend directory
-COPY backend/ .
+COPY backend/app/ .
 
 # Make sure Python can find your modules
 ENV PYTHONPATH=/app
+
+ENV LLM_API_KEY=${LLM_API_KEY}
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Command to run the application
-CMD ["uvicorn", "app.App:app", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["uvicorn", "App:app", "--host", "0.0.0.0", "--port", "5000"]

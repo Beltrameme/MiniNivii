@@ -8,10 +8,12 @@ services:
     ports:
       - "5000:5000"
     volumes:
-    - ./backend/app/database.db:/app/app/database.db  # Mount the SQLite database file
+    - ./backend/app:/App  # <-- Recommended for now
     - ./backend/data:/app/data
     environment:
       - DATABASE_URL=sqlite:///app/database.db  # Adjust if necessary
+    env_file:
+      - ./backend/app/.env
 
   frontend:
     build:

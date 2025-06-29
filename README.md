@@ -40,7 +40,7 @@ Dependencies needed before installation:
         cd app
         uvicorn App:app --host 0.0.0.0 --port 5000
      ```
-     This application is runnning in a virtual enviroment, if one wishes to close this enviroment, copy this code:
+     This application is runnning in a virtual enviroment, if one wishes to close this enviroment, run this code:
      ```
      deactivate
      ```

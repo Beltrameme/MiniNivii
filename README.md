@@ -24,6 +24,7 @@ Dependencies needed before installation:
       deactivate
     ```
    For the backend, inside the .env, please write your llm api key like this: `LLM_API_KEY=<your_api_key>`
+
    
    - Frontend:
    ```bash

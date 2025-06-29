@@ -34,21 +34,21 @@ Dependencies needed before installation:
     ```
 4. Run the application:
    - Backend:
-     ```bash
-        cd backend
-        source venv/bin/activate
-        cd app
-        uvicorn App:app --host 0.0.0.0 --port 5000
-     ```
-     This application is runnning in a virtual enviroment, if one wishes to close this enviroment, run this code:
-     ```
-     deactivate
-     ```
+   ```bash
+      cd backend
+      source venv/bin/activate
+      cd app
+      uvicorn App:app --host 0.0.0.0 --port 5000
+   ```
+  This application is runnning in a virtual enviroment, if one wishes to close this enviroment, run this code:
+   ```
+   deactivate
+   ```
    - Frontend:
-     ```bash
-        cd frontend
-        npm start
-     ```
+   ```bash
+      cd frontend
+      npm start
+   ```
 5. To run in docker:
    - `docker-compose up --build`
 

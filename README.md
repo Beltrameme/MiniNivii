@@ -30,7 +30,6 @@ Dependencies needed before installation:
       git clone <repo>
       cd frontend
       npm install
-      npm start
     ```
 4. Run the application:
    - Backend:

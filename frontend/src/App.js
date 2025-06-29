@@ -38,7 +38,8 @@ function App() {
         body: JSON.stringify({ question })
       });
       if (!response.ok) { // Check for HTTP error statuses
-      throw new Error(`Server responded with status ${response.status}`);
+      
+      throw new Error(`Server responded with ${response.statusText}`);
       }
       const data = await response.json();
       setResponseData(data);

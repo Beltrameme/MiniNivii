@@ -28,7 +28,6 @@ Dependencies needed before installation:
    
    - Frontend:
    ```bash
-      git clone <repo>
       cd frontend
       npm install
     ```
@@ -40,9 +39,9 @@ Dependencies needed before installation:
       cd app
       uvicorn App:app --host 0.0.0.0 --port 5000
    ```
-  This application is runnning in a virtual enviroment, if one wishes to close this enviroment, run this code:
-   ```
-   deactivate
+   - This application is runnning in a virtual enviroment, if one wishes to close this enviroment, run this code:
+   ```bash
+      deactivate
    ```
    - Frontend:
    ```bash
@@ -50,8 +49,9 @@ Dependencies needed before installation:
       npm start
    ```
 5. To run in docker:
-   - `docker-compose up --build`
-
+   ```bash
+      docker-compose up --build
+    ```
 ## Tech Stack
 
 - **Backend**: Python (FastAPI)
